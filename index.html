@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Bag Size Form</title>
+    <style>
+        label, input, select, button {
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <h1>เลือกประเภทถุง</h1>
@@ -15,15 +21,16 @@
             <option value="type4">พับปากถุง ใส่หูเกลียวกระดาษ</option>
         </select>
         <h2>กรอกมิติของถุง</h2>
-        <label for="dValue">D:</label>
-        <input type="number" id="dValue" name="dValue" step="0.1"><br>
-        <label for="wValue">W:</label>
-        <input type="number" id="wValue" name="wValue"><br>
-        <label for="hValue">H:</label>
-        <input type="number" id="hValue" name="hValue"><br>
+        <label for="dValue">D (cm):</label>
+        <input type="number" id="dValue" name="dValue" step="0.1">
+        <label for="wValue">W (cm):</label>
+        <input type="number" id="wValue" name="wValue">
+        <label for="hValue">H (cm):</label>
+        <input type="number" id="hValue" name="hValue">
         <button type="button" onclick="checkSize()">ตรวจสอบ</button>
     </form>
     <p id="result"></p>
+    <p id="paperSize"></p>
 
     <script>
         const sizeLimits = {
@@ -35,11 +42,12 @@
 
         function checkSize() {
             const bagType = document.getElementById("bagType").value;
-            const dValue = document.getElementById("dValue").value;
-            const wValue = document.getElementById("wValue").value;
-            const hValue = document.getElementById("hValue").value;
+            const dValue = parseFloat(document.getElementById("dValue").value);
+            const wValue = parseFloat(document.getElementById("wValue").value);
+            const hValue = parseFloat(document.getElementById("hValue").value);
 
             let resultText = "ไม่สามารถตรวจสอบได้";
+            let paperSizeText = "";
 
             if (dValue in sizeLimits[bagType]) {
                 const limits = sizeLimits[bagType][dValue];
@@ -47,6 +55,21 @@
 
                 if ((wValue >= wMin && wValue <= wMax) && (hValue >= hMin && hValue <= hMax)) {
                     resultText = "ขนาดถุงที่ต้องการสามารถผลิตได้";
+
+                    // คำนวณขนาดกระดาษ
+                    let verticalSize = hValue + ((dValue / 2) + 1.5);
+                    let horizontalSize = dValue + wValue + dValue + wValue + 1.5;
+
+                    // ถ้าเป็นแบบพับปากถุง ให้บวกเพิ่มอีก 5 ซม.
+                    if (bagType === "type3" || bagType === "type4") {
+                        verticalSize += 5;
+                    }
+
+                    // แปลงขนาดจากเซนติเมตรเป็นนิ้ว (1 นิ้ว = 2.54 ซม.)
+                    verticalSize = (verticalSize / 2.54).toFixed(2);
+                    horizontalSize = (horizontalSize / 2.54).toFixed(2);
+
+                    paperSizeText = `ขนาดกระดาษที่ต้องใช้คือ: Vertical = ${verticalSize} นิ้ว, Horizontal = ${horizontalSize} นิ้ว`;
                 } else {
                     resultText = "ขนาดถุงที่ต้องการไม่สามารถผลิตได้";
                     if (wValue < wMin || wValue > wMax) {
@@ -61,6 +84,7 @@
             }
 
             document.getElementById("result").innerText = resultText;
+            document.getElementById("paperSize").innerText = paperSizeText;
         }
     </script>
 </body>
