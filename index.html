@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bag Size Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -11,10 +12,13 @@
             padding: 20px;
             color: #333;
         }
-        h1, h2 {
+        h1 {
             color: #1d1d1f;
             text-align: center;
             font-family: 'Kanit', sans-serif;
+        }
+        h2 {
+            color: #1d1d1f;
         }
         form {
             background-color: #ffffff;
@@ -50,6 +54,19 @@
             text-align: center;
             margin-top: 20px;
             font-size: 1.2em;
+            padding: 20px;
+            border-radius: 12px;
+            display: none; /* เพิ่มบรรทัดนี้เพื่อซ่อนผลลัพธ์เริ่มต้น */
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         .image-container {
             text-align: center;
@@ -62,7 +79,7 @@
     </style>
 </head>
 <body>
-    <h1>KISUKA ตรวจสอบขนาดไซส์ถุงที่เราทำได้ </h1>
+    <h1>เลือกประเภทถุง</h1>
     <form id="bagForm">
         <label for="bagType">เลือกประเภทถุง:</label>
         <select id="bagType" name="bagType">
@@ -72,7 +89,29 @@
             <option value="type4">พับปากถุง ใส่หูเกลียวกระดาษ</option>
         </select>
         <label for="dValue">D:</label>
-        <input type="number" id="dValue" name="dValue" step="0.1"><br>
+        <select id="dValue" name="dValue">
+            <option value="7">7</option>
+            <option value="7.5">7.5</option>
+            <option value="8">8</option>
+            <option value="8.5">8.5</option>
+            <option value="9">9</option>
+            <option value="9.5">9.5</option>
+            <option value="10">10</option>
+            <option value="10.5">10.5</option>
+            <option value="11">11</option>
+            <option value="11.5">11.5</option>
+            <option value="12">12</option>
+            <option value="12.5">12.5</option>
+            <option value="13">13</option>
+            <option value="13.5">13.5</option>
+            <option value="14">14</option>
+            <option value="14.5">14.5</option>
+            <option value="15">15</option>
+            <option value="15.5">15.5</option>
+            <option value="16">16</option>
+            <option value="16.5">16.5</option>
+            <option value="17">17</option>
+        </select>
         <label for="wValue">W:</label>
         <input type="number" id="wValue" name="wValue"><br>
         <label for="hValue">H:</label>
@@ -86,7 +125,7 @@
     <div class="instructions">
         <h2>วิธีการใช้โปรแกรม:</h2>
         <p>1. เลือกประเภทถุงที่ต้องการ</p>
-        <p>2. กรอกค่ามิติใดมิติหนึ่ง (D, W, หรือ H) แนะนำให้เริ่มจาก D โดยมีค่าเริ่มต้นที่ 7cm - 17cm โดยที่จะเป็นการเพิ่มที่ละ 0.5cm (7 , 7.5 , 8 , 8.5 , .... , 17)</p>
+        <p>2. กรอกค่ามิติใดมิติหนึ่ง (D, W, หรือ H)</p>
         <p>3. กดปุ่มตรวจสอบเพื่อดูขนาดถุงที่สามารถผลิตได้</p>
     </div>
 
@@ -104,8 +143,9 @@
             const wValue = document.getElementById("wValue").value;
             const hValue = document.getElementById("hValue").value;
 
-            let resultText = "ไม่สามารถตรวจสอบได้";
+            let resultText = "";
             let suggestions = [];
+            let resultClass = "";
 
             for (let d in sizeLimits[bagType]) {
                 const limits = sizeLimits[bagType][d];
@@ -123,11 +163,16 @@
 
             if (suggestions.length > 0) {
                 resultText = "ขนาดถุงที่ต้องการสามารถผลิตได้ในลิมิตต่อไปนี้:\n" + suggestions.join("\n");
+                resultClass = "success";
             } else {
                 resultText = "ขนาดถุงที่ต้องการไม่สามารถผลิตได้";
+                resultClass = "error";
             }
 
-            document.getElementById("result").innerText = resultText;
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerText = resultText;
+            resultDiv.className = resultClass;
+            resultDiv.style.display = "block"; // แสดงผลลัพธ์
         }
     </script>
 </body>
